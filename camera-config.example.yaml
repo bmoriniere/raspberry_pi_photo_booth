@@ -1,7 +1,7 @@
 #Photo Booth Config:
 "CAMERA_BUTTON_PIN" : 21 # GPIO pin that is connected to 'take photo' button
 "EXIT_BUTTON_PIN"   : 13 # GPIO pin that is connected to 'exit' button (optional)
-"TOTAL_PICS"        : 4  # Number of pics to be taken
+"TOTAL_PICS"        : 1  # Number of pics to be taken
 "PREP_DELAY"        : 4  # Number of seconds as users prepare to have photo taken, before countdown commences
 "COUNTDOWN"         : 3  # Number of seconds to count down from
 
@@ -18,8 +18,8 @@
 #   sudo apt-get dist-upgrade
 
 # Resolution of the photo booth display:
-"SCREEN_W"          : 800
-"SCREEN_H"          : 480
+"SCREEN_W"          : 1920
+"SCREEN_H"          : 1080
 
 # Camera setup
 "CAMERA_ROTATION"   : 270 # Rotation of the camera

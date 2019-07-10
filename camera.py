@@ -259,7 +259,7 @@ def playback_screen(filename_prefix):
 
     #Processing
     print('Processing...')
-    processing_image = REAL_PATH + '/assets/processing.png'
+    processing_image = REAL_PATH + '/assets/processing.jpg'
     overlay_image(processing_image, 2)
 
     #Playback
@@ -277,7 +277,7 @@ def playback_screen(filename_prefix):
 
     #All done
     print('All done!')
-    finished_image = REAL_PATH + '/assets/all_done_delayed_upload.png'
+    finished_image = REAL_PATH + '/assets/all_done_delayed_upload.jpg'
     overlay_image(finished_image, 5)
 
 def main():
@@ -300,8 +300,8 @@ def main():
     CAMERA.start_preview(resolution=(SCREEN_W, SCREEN_H))
 
     #Display intro screen
-    intro_image_1 = REAL_PATH + '/assets/intro_1.png'
-    intro_image_2 = REAL_PATH + '/assets/intro_2.png'
+    intro_image_1 = REAL_PATH + '/assets/intro_1.jpg'
+    intro_image_2 = REAL_PATH + '/assets/intro_2.jpg'
     overlay_1 = overlay_image(intro_image_1, 0, 3)
     overlay_2 = overlay_image(intro_image_2, 0, 4)
 
