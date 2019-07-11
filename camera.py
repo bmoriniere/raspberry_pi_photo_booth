@@ -257,11 +257,6 @@ def playback_screen(filename_prefix):
     Final screen before main loop restarts
     """
 
-    #Processing
-    print('Processing...')
-    processing_image = REAL_PATH + '/assets/processing.jpg'
-    overlay_image(processing_image, 2)
-
     #Playback
     prev_overlay = False
     for photo_number in range(1, TOTAL_PICS + 1):
@@ -270,7 +265,7 @@ def playback_screen(filename_prefix):
         # The idea here, is only remove the previous overlay after a new overlay is added.
         if prev_overlay:
             remove_overlay(prev_overlay)
-        sleep(2)
+        sleep(5)
         prev_overlay = this_overlay
 
     remove_overlay(prev_overlay)
