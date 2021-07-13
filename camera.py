@@ -100,6 +100,19 @@ try:
 except KeyError as exc:
     pass
 
+
+pygame.init()
+pygame.mixer.init()
+SOUND_COUNTDOWN_1 = './assets/sounds/deshabillezvous.mp3'
+SOUND_COUNTDOWN_2 = './assets/sounds/ohisse.mp3'
+
+SOUND_CAMERA = './assets/sounds/camera.mp3'
+
+SOUND_DONE_0 = './assets/sounds/cestbeau.mp3'
+SOUND_DONE_1 = './assets/sounds/mignonlemoustachu.mp3'
+SOUND_DONE_2 = './assets/sounds/plusdeprofil.mp3'
+SOUND_DONE_3 = './assets/sounds/tropgros.mp3'
+
 ##############################
 ### Setup Objects and Pins ###
 ##############################
@@ -356,10 +369,15 @@ def main():
         remove_overlay(overlay_1)
 
         photo_filenames = []
-        for photo_number in range(1, TOTAL_PICS + 1):
-            prep_for_photo_screen(photo_number)
-            fname = taking_photo(photo_number, filename_prefix)
-            photo_filenames.append(fname)
+        if (taken_photo%10 == 1):
+            play_sound(SOUND_COUNTDOWN_1)
+
+        prep_for_photo_screen(1)
+        remove_overlay(overlay)
+        if (taken_photo%10 != 1):
+            play_sound(SOUND_COUNTDOWN_2)
+        fname = taking_photo(1, filename)
+        photo_filenames.append(fname)
 
         #thanks for playing
         playback_screen(filename_prefix)
