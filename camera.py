@@ -15,6 +15,7 @@ __version__ = '2.2'
 #Standard imports
 from time import sleep
 from shutil import copy2
+import pygame
 import sys
 import datetime
 import os
@@ -103,7 +104,8 @@ except KeyError as exc:
 
 pygame.init()
 pygame.mixer.init()
-SOUND_COUNTDOWN_1 = './assets/sounds/deshabillezvous.mp3'
+SOUND_APOIL = './assets/sounds/deshabillezvous.mp3'
+SOUND_COUNTDOWN_1 = './assets/sounds/unedeuxtrois.mp3'
 SOUND_COUNTDOWN_2 = './assets/sounds/ohisse.mp3'
 
 SOUND_CAMERA = './assets/sounds/camera.mp3'
@@ -112,6 +114,7 @@ SOUND_DONE_0 = './assets/sounds/cestbeau.mp3'
 SOUND_DONE_1 = './assets/sounds/mignonlemoustachu.mp3'
 SOUND_DONE_2 = './assets/sounds/plusdeprofil.mp3'
 SOUND_DONE_3 = './assets/sounds/tropgros.mp3'
+SOUND_DONE_4 = './assets/sounds/moche.mp3'
 
 ##############################
 ### Setup Objects and Pins ###
@@ -130,6 +133,11 @@ CAMERA.hflip = CAMERA_HFLIP
 ########################
 ### Helper Functions ###
 ########################
+
+def play_sound(file):
+    pygame.mixer.music.load(file)
+    pygame.mixer.music.play()
+
 def health_test_required_folders():
     folders_list=[SAVE_RAW_IMAGES_FOLDER]
     folders_list.extend(COPY_IMAGES_TO)
@@ -169,7 +177,7 @@ def get_base_filename_for_images():
     base_filename = base_filename.replace(' ', '_')
     base_filename = base_filename.replace(':', '-')
 
-    base_filepath = REAL_PATH + '/' + SAVE_RAW_IMAGES_FOLDER + '/' + base_filename
+    base_filepath = REAL_PATH + '/' + SAVE_RAW_IMAGES_FOLDER + '/' + base_filename + '.jpg'
 
     return base_filepath
 
@@ -243,50 +251,49 @@ def prep_for_photo_screen(photo_number):
     """
 
     #Get ready for the next photo
-    get_ready_image = REAL_PATH + '/assets/get_ready_' + str(photo_number) + '.png'
-    overlay_image(get_ready_image, PREP_DELAY, 3, 'RGBA')
+    get_ready_image = REAL_PATH + '/assets/Posez.jpg'
+    overlay_image(get_ready_image, PREP_DELAY, 4, 'RGBA')
 
-def taking_photo(photo_number, filename_prefix):
+def taking_photo(photo_number, filename):
     """
     This function captures the photo
     """
 
-    #get filename to use
-    filename = filename_prefix + '_' + str(photo_number) + 'of'+ str(TOTAL_PICS)+'.jpg'
-
     #countdown from 3, and display countdown on screen
     for counter in range(COUNTDOWN, 0, -1):
-        print_overlay("             ..." + str(counter))
-        sleep(1)
+        get_ready_image = REAL_PATH + '/assets/wait-' + str(counter) + '.png'
+        overlay_image(get_ready_image, 1, 3, 'RGBA')
 
     #Take still
+    play_sound(SOUND_CAMERA)
     CAMERA.annotate_text = ''
     CAMERA.capture(filename)
     print('Photo (' + str(photo_number) + ') saved: ' + filename)
     return filename
 
-def playback_screen(filename_prefix):
+def playback_screen(filename):
     """
     Final screen before main loop restarts
     """
 
-    #Playback
-    prev_overlay = False
-    for photo_number in range(1, TOTAL_PICS + 1):
-        filename = filename_prefix + '_' + str(photo_number) + 'of'+ str(TOTAL_PICS)+'.jpg'
-        this_overlay = overlay_image(filename, False, (3 + TOTAL_PICS))
-        # The idea here, is only remove the previous overlay after a new overlay is added.
-        if prev_overlay:
-            remove_overlay(prev_overlay)
-        sleep(5)
-        prev_overlay = this_overlay
-
-    remove_overlay(prev_overlay)
+    overlay_image(filename, 2, 3)
 
     #All done
     print('All done!')
-    finished_image = REAL_PATH + '/assets/all_done_delayed_upload.jpg'
-    overlay_image(finished_image, 5)
+    finished_image = REAL_PATH + '/assets/Fini.jpg'
+    overlay_image(finished_image, 3)
+
+def done_sound(photo_number):
+    if(photo_number%5 == 0):
+        play_sound(SOUND_DONE_0)
+    elif(photo_number%5 == 1):
+        play_sound(SOUND_DONE_1)
+    elif(photo_number%5 == 2):
+        play_sound(SOUND_DONE_2)
+    elif(photo_number%5 == 3):
+        play_sound(SOUND_DONE_3)
+    elif(photo_number%5 == 4):
+        play_sound(SOUND_DONE_4)
 
 def main():
     """
@@ -301,6 +308,8 @@ def main():
     print('Use [Ctrl] + [\\] to exit')
     print('')
 
+    taken_photo = 3
+
     #Setup any required folders (if missing)
     health_test_required_folders()
 
@@ -308,10 +317,8 @@ def main():
     CAMERA.start_preview(resolution=(SCREEN_W, SCREEN_H))
 
     #Display intro screen
-    intro_image_1 = REAL_PATH + '/assets/intro_1.jpg'
-    intro_image_2 = REAL_PATH + '/assets/intro_2.jpg'
-    overlay_1 = overlay_image(intro_image_1, 0, 3)
-    overlay_2 = overlay_image(intro_image_2, 0, 4)
+    intro_image = REAL_PATH + '/assets/Bienvenue.jpg'
+    overlay = overlay_image(intro_image, 0, 3)
 
     #Wait for someone to push the button
     i = 0
@@ -343,15 +350,6 @@ def main():
 
         #Stay inside loop, until button is pressed
         if photo_button_is_pressed is None:
-
-            #After every 10 cycles, alternate the overlay
-            i = i+1
-            if i == blink_speed:
-                overlay_2.alpha = 255
-            elif i == (2 * blink_speed):
-                overlay_2.alpha = 0
-                i = 0
-
             #Regardless, restart loop
             sleep(0.1)
             continue
@@ -364,23 +362,35 @@ def main():
         GPIO.remove_event_detect(EXIT_BUTTON_PIN)
 
         #Get filenames for images
-        filename_prefix = get_base_filename_for_images()
-        remove_overlay(overlay_2)
-        remove_overlay(overlay_1)
+        filename = get_base_filename_for_images()
 
         photo_filenames = []
         if (taken_photo%10 == 1):
-            play_sound(SOUND_COUNTDOWN_1)
+            play_sound(SOUND_APOIL)
 
         prep_for_photo_screen(1)
         remove_overlay(overlay)
         if (taken_photo%10 != 1):
-            play_sound(SOUND_COUNTDOWN_2)
+
+            if (taken_photo%2 == 0):
+                play_sound(SOUND_COUNTDOWN_1)
+            else:
+                play_sound(SOUND_COUNTDOWN_2)
         fname = taking_photo(1, filename)
         photo_filenames.append(fname)
 
         #thanks for playing
-        playback_screen(filename_prefix)
+
+        overlay_image(filename, 2, 3)
+
+        #All done
+        done_sound(taken_photo)
+        finished_image = REAL_PATH + '/assets/Fini.jpg'
+        finished_overlay = overlay_image(finished_image, 0, 4)
+        overlay = overlay_image(intro_image, 0, 3)
+
+        sleep(2)
+        remove_overlay(finished_overlay)
 
         #Save photos into additional folders (for post-processing/backup... etc.)
         for dest in COPY_IMAGES_TO:
@@ -392,9 +402,8 @@ def main():
         if TESTMODE_AUTOPRESS_BUTTON:
             break
 
+        taken_photo += 1
         # Otherwise, display intro screen again
-        overlay_1 = overlay_image(intro_image_1, 0, 3)
-        overlay_2 = overlay_image(intro_image_2, 0, 4)
         GPIO.add_event_detect(CAMERA_BUTTON_PIN, GPIO.FALLING)
         GPIO.add_event_detect(EXIT_BUTTON_PIN, GPIO.FALLING)
         print('Press the button to take a photo')
