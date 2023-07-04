@@ -19,6 +19,7 @@ import pygame
 import sys
 import datetime
 import os
+import keyboard
 
 #Need to do this early, in case import below fails:
 REAL_PATH = os.path.dirname(os.path.realpath(__file__))
@@ -251,7 +252,7 @@ def prep_for_photo_screen(photo_number):
     """
 
     #Get ready for the next photo
-    get_ready_image = REAL_PATH + '/assets/Posez.jpg'
+    get_ready_image = REAL_PATH + '/assets/souriez.png'
     overlay_image(get_ready_image, PREP_DELAY, 4, 'RGBA')
 
 def taking_photo(photo_number, filename):
@@ -280,7 +281,7 @@ def playback_screen(filename):
 
     #All done
     print('All done!')
-    finished_image = REAL_PATH + '/assets/Fini.jpg'
+    finished_image = REAL_PATH + '/assets/all_done.png'
     overlay_image(finished_image, 3)
 
 def done_sound(photo_number):
@@ -317,7 +318,7 @@ def main():
     CAMERA.start_preview(resolution=(SCREEN_W, SCREEN_H))
 
     #Display intro screen
-    intro_image = REAL_PATH + '/assets/Bienvenue.jpg'
+    intro_image = REAL_PATH + '/assets/Bienvenue.png'
     overlay = overlay_image(intro_image, 0, 3)
 
     #Wait for someone to push the button
@@ -385,7 +386,7 @@ def main():
 
         #All done
         done_sound(taken_photo)
-        finished_image = REAL_PATH + '/assets/Fini.jpg'
+        finished_image = REAL_PATH + '/assets/all_done.png'
         finished_overlay = overlay_image(finished_image, 0, 4)
         overlay = overlay_image(intro_image, 0, 3)
 
