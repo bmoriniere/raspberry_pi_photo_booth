@@ -105,17 +105,20 @@ except KeyError as exc:
 
 pygame.init()
 pygame.mixer.init()
-SOUND_APOIL = './assets/sounds/deshabillezvous.mp3'
-SOUND_COUNTDOWN_1 = './assets/sounds/unedeuxtrois.mp3'
-SOUND_COUNTDOWN_2 = './assets/sounds/ohisse.mp3'
+SOUND_COUNTDOWN_0 = './assets/sounds/vous-allez-me-montrer-ce-que-vous-avez-un-peu-dans-le-froc.mp3'
+SOUND_COUNTDOWN_1 = './assets/sounds/deshabillezvous.mp3'
+SOUND_COUNTDOWN_2 = './assets/sounds/allez-y-mollo-avec-la-joie.mp3'
+SOUND_COUNTDOWN_3 = './assets/sounds/mais-allez-y-magnez-vous-le-fion-espece-de-grosse-dinde.mp3'
 
 SOUND_CAMERA = './assets/sounds/camera.mp3'
 
-SOUND_DONE_0 = './assets/sounds/cestbeau.mp3'
-SOUND_DONE_1 = './assets/sounds/mignonlemoustachu.mp3'
-SOUND_DONE_2 = './assets/sounds/plusdeprofil.mp3'
-SOUND_DONE_3 = './assets/sounds/tropgros.mp3'
-SOUND_DONE_4 = './assets/sounds/moche.mp3'
+SOUND_DONE_0 = './assets/sounds/allez_boire_un_coup.mp3'
+SOUND_DONE_1 = './assets/sounds/considerer_que_je_suis_officiellement_cul_nu.mp3'
+SOUND_DONE_2 = './assets/sounds/deux_trous_du_cul_soient_plus_efficaces_qu_un_seul.mp3'
+SOUND_DONE_3 = './assets/sounds/lair_idiote.mp3'
+SOUND_DONE_4 = './assets/sounds/pour_savoir_si_il_va_y_avoir_du_vent.mp3'
+SOUND_DONE_5 = './assets/sounds/sourire_comme_des_glands.mp3'
+SOUND_DONE_6 = './assets/sounds/vous-vous-devriez-arreter-de-sourire.mp3'
 
 ##############################
 ### Setup Objects and Pins ###
@@ -285,16 +288,20 @@ def playback_screen(filename):
     overlay_image(finished_image, 3)
 
 def done_sound(photo_number):
-    if(photo_number%5 == 0):
+    if(photo_number%7 == 0):
         play_sound(SOUND_DONE_0)
-    elif(photo_number%5 == 1):
+    elif(photo_number%7 == 1):
         play_sound(SOUND_DONE_1)
-    elif(photo_number%5 == 2):
+    elif(photo_number%7 == 2):
         play_sound(SOUND_DONE_2)
-    elif(photo_number%5 == 3):
+    elif(photo_number%7 == 3):
         play_sound(SOUND_DONE_3)
-    elif(photo_number%5 == 4):
+    elif(photo_number%7 == 4):
         play_sound(SOUND_DONE_4)
+    elif(photo_number%7 == 5):
+        play_sound(SOUND_DONE_5)
+    elif(photo_number%7 == 6):
+        play_sound(SOUND_DONE_6)
 
 def main():
     """
@@ -366,17 +373,18 @@ def main():
         filename = get_base_filename_for_images()
 
         photo_filenames = []
-        if (taken_photo%10 == 1):
-            play_sound(SOUND_APOIL)
 
         prep_for_photo_screen(1)
         remove_overlay(overlay)
-        if (taken_photo%10 != 1):
 
-            if (taken_photo%2 == 0):
-                play_sound(SOUND_COUNTDOWN_1)
-            else:
-                play_sound(SOUND_COUNTDOWN_2)
+        if(taken_photo%10 == 0):
+            play_sound(SOUND_COUNTDOWN_0)
+        elif(taken_photo%10 == 1):
+            play_sound(SOUND_COUNTDOWN_1)
+        elif(taken_photo%10 == 2):
+            play_sound(SOUND_COUNTDOWN_2)
+        elif(taken_photo%10 == 3):
+            play_sound(SOUND_COUNTDOWN_3)
         fname = taking_photo(1, filename)
         photo_filenames.append(fname)
 
